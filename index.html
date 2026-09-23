@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TB Risk Predictor</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🫁 TB Risk Prediction Tool</h1>
+            <p>Data-Driven Risk Scoring Model | Doctors For You NGO — Mandla District, MP</p>
+
+            <div class="header-sub">
+                <div class="badge">Logistic Regression Model | AUC: 0.726</div>
+                <div class="badge">Trained on 32,843 patients</div>
+                <div class="badge">MBA Internship Project 2025</div>
+            </div>
+        </div>
+
+
+        <!-- Model Statistics -->
+        <div class="card stats-card">
+
+            <div class="model-strip">
+
+                <div class="model-stat">
+                    <div class="val">32,843</div>
+                    <div class="key">Patients in Training Data</div>
+                </div>
+
+                <div class="model-stat">
+                    <div class="val">72.6%</div>
+                    <div class="key">Model AUC Score</div>
+                </div>
+
+                <div class="model-stat">
+                    <div class="val">11</div>
+                    <div class="key">Predictive Variables</div>
+                </div>
+
+                <div class="model-stat">
+                    <div class="val">1.14%</div>
+                    <div class="key">Overall Positivity Rate</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Patient Form -->
+        <div class="card">
+
+            <div class="section-title">
+                Patient Risk Assessment Form
+            </div>
+
+            <div class="form-grid">
+
+                <!-- Age -->
+                <div class="field">
+                    <label>Age <span>(years)</span></label>
+                    <input type="number" id="age" min="0" max="100" placeholder="e.g. 48" oninput="calculate()">
+                </div>
+
+
+                <!-- Gender -->
+                <div class="field">
+                    <label>Gender</label>
+
+                    <select id="gender" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+
+
+                <!-- Tribal -->
+                <div class="field">
+                    <label>Tribal / Non-Tribal</label>
+
+                    <select id="tribal" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="tribal">Tribal</option>
+                        <option value="non-tribal">Non-Tribal</option>
+                    </select>
+                </div>
+
+
+                <!-- Cough -->
+                <div class="field">
+                    <label>Cough &gt; 2 Weeks</label>
+
+                    <select id="cough" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+
+                <!-- Chest Pain -->
+                <div class="field">
+                    <label>Chest Pain <span>(last 1 month)</span></label>
+
+                    <select id="chest" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+
+                <!-- X-Ray -->
+                <div class="field">
+                    <label>X-Ray Result</label>
+
+                    <select id="xray" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="suggestive">Suggestive of TB</option>
+                        <option value="negative">Not Suggestive / Negative</option>
+                        <option value="notdone">Not Done</option>
+                    </select>
+                </div>
+
+
+                <!-- Alcohol -->
+                <div class="field">
+                    <label>Alcohol Use</label>
+
+                    <select id="alcohol" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+
+                <!-- Smoking -->
+                <div class="field">
+                    <label>Smoking</label>
+
+                    <select id="smoking" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+
+                <!-- Weight Loss -->
+                <div class="field">
+                    <label>Weight Loss <span>(last 1 month)</span></label>
+
+                    <select id="weightloss" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+
+                <!-- Fever -->
+                <div class="field">
+                    <label>Fever <span>(last 1 month)</span></label>
+
+                    <select id="fever" onchange="calculate()">
+                        <option value="">-- Select --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <!-- Buttons -->
+            <div class="btn-row">
+
+                <button class="btn btn-primary" onclick="calculate()">
+                    ⚡ Calculate Risk
+                </button>
+
+                <button class="btn btn-reset" onclick="resetForm()">
+                    ↺ Reset
+                </button>
+
+                <button class="btn btn-reset" onclick="saveToHistory()" id="saveBtn" style="display:none;">
+                    💾 Save Patient
+                </button>
+
+            </div>
+
+
+            <div class="info-note">
+                ℹ️ This tool is based on a Logistic Regression model trained on
+                32,843 survey records from Mandla District (R1–R3).
+                It is designed to <strong>support</strong> clinical decision-making,
+                not replace it.
+            </div>
+
+        </div>
+
+
+        <!-- Result -->
+        <div class="card" id="resultPanel" style="display:none;">
+
+            <div class="section-title">
+                Risk Assessment Result
+            </div>
+
+
+            <div class="score-panel">
+
+                <div class="score-display">
+
+                    <div class="score-circle" id="scoreCircle">
+
+                        <div class="num" id="scoreNum">—</div>
+
+                        <div class="lbl">
+                            / 12 pts
+                        </div>
+
+                    </div>
+
+
+                    <div class="score-info">
+
+                        <h3 id="riskLabel">
+                            Complete the form
+                        </h3>
+
+                        <p id="riskDesc">
+                            Fill in all fields above to calculate
+                            the patient's TB risk score.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Risk Bar -->
+                <div class="risk-bar-wrap">
+
+                    <div class="probability-header">
+                        <span>Risk Probability</span>
+
+                        <span id="probText">—</span>
+                    </div>
+
+
+                    <div class="risk-bar-track">
+
+                        <div class="risk-bar-fill" id="riskBar">
+                        </div>
+
+                    </div>
+
+
+                    <div class="risk-labels">
+                        <span>Low Risk</span>
+                        <span>Moderate</span>
+                        <span>High Risk</span>
+                        <span>Very High</span>
+                    </div>
+
+                </div>
+
+
+                <!-- Breakdown -->
+                <div class="breakdown-title">
+                    Score Breakdown by Factor:
+                </div>
+
+
+                <div class="breakdown">
+
+                    <div class="factor-box age-factor" id="f-age">
+                        <div class="pts" id="pts-age">—</div>
+                        <div class="fname">Age</div>
+                    </div>
+
+                    <div class="factor-box tribal-factor" id="f-tribal">
+                        <div class="pts" id="pts-tribal">—</div>
+                        <div class="fname">Tribal</div>
+                    </div>
+
+                    <div class="factor-box cough-factor" id="f-cough">
+                        <div class="pts" id="pts-cough">—</div>
+                        <div class="fname">Cough</div>
+                    </div>
+
+                    <div class="factor-box xray-factor" id="f-xray">
+                        <div class="pts" id="pts-xray">—</div>
+                        <div class="fname">X-Ray</div>
+                    </div>
+
+                    <div class="factor-box chest-factor" id="f-chest">
+                        <div class="pts" id="pts-chest">—</div>
+                        <div class="fname">Chest Pain</div>
+                    </div>
+
+                    <div class="factor-box alcohol-factor" id="f-alcohol">
+                        <div class="pts" id="pts-alcohol">—</div>
+                        <div class="fname">Alcohol</div>
+                    </div>
+
+                    <div class="factor-box gender-factor" id="f-gender">
+                        <div class="pts" id="pts-gender">—</div>
+                        <div class="fname">Gender</div>
+                    </div>
+
+                    <div class="factor-box wt-factor" id="f-wt">
+                        <div class="pts" id="pts-wt">—</div>
+                        <div class="fname">Weight Loss</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recommendation -->
+            <div class="rec-panel" id="recPanel">
+
+                <h4 id="recTitle"></h4>
+
+                <ul id="recList"></ul>
+
+            </div>
+
+        </div>
+
+
+        <!-- History -->
+        <div class="card" id="historyPanel">
+
+            <div class="section-title">
+                Patient Screening Log
+            </div>
+
+
+            <table class="history-table">
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Tribal</th>
+                        <th>Cough</th>
+                        <th>X-Ray</th>
+                        <th>Score</th>
+                        <th>Risk Level</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="historyBody"></tbody>
+
+            </table>
+
+
+            <div class="history-note">
+                * This log resets when the page is refreshed.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
